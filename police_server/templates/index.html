@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block head %}
+<title>Police Reports System </title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+{% endblock %} {% block body %}
+
+<!-- an input to store the flask server ip address and we can access it from javascript later -->
+<input type="hidden" id="flask_server_ip_address" value="{{ server_ip }}" />
+
+<!-- create the control panel-->
+<ul>
+  <li><a href="{{ url_for('about') }}">About</a></li>
+  <li><a href="{{ url_for('log') }}">Logs</a></li>
+  <li><a href="{{ url_for('settings') }}">Settings</a></li>
+  <li><a href="{{ url_for('reports') }}">Reports</a></li>
+</ul>
+
+<div class="main-container">
+
+
+</div>
+
+  <script type="text/javascript" src="{{ url_for('static', filename="js/app.js") }}" ></script>
+{% endblock %}

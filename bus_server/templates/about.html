@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block head %}
+    <title>About Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/about.css')
+    }}" {% endblock %}
+  </head>
+
+  <body>
+    {% block body %}
+    <p>Bus Managmenet System</p>
+    <p></p>
+
+    <ul>
+      This Project Done By:
+      <li><a href="/">VolTech Group</li>
+    </ul>
+    {% endblock %}
+  </body>
+</html>

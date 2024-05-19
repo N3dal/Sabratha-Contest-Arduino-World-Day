@@ -1,0 +1,176 @@
+{% extends 'base.html' %} {% block head %}
+<title>Bus Managmenet System </title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+{% endblock %} {% block body %}
+
+<!-- an input to store the flask server ip address and we can access it from javascript later -->
+<input type="hidden" id="flask_server_ip_address" value="{{ server_ip }}" />
+
+<!-- create the control panel-->
+<ul>
+  <li><a href="{{ url_for('about') }}">About</a></li>
+  <li><a href="{{ url_for('log') }}">Logs</a></li>
+  <li><a href="{{ url_for('settings') }}">Settings</a></li>
+  <li><a href="{{ url_for('reports') }}">Reports</a></li>
+</ul>
+
+<div class="main-container">
+
+  <div class="bus-container">
+    <div class="container-title">Bus-1</div>
+
+    <div class="sub-container">
+      <div class="gauge-container">
+        <div class="gauge-progress">
+            <div class="gauge-progress-bar" id="bus-1-gauge-progress-bar"></div>
+            <div class="needle" id="bus-1-gauge-needle"></div>
+        </div>
+        <div class="gauge-digital-value" id="bus-1-motor-speed-gauge-digital-value">
+          --
+        </div>
+    </div>
+  
+    <div class="gauge-container">
+      <div class="gauge-progress">
+          <div class="gauge-progress-bar"></div>
+          <div class="needle"></div>
+      </div>
+      <div class="gauge-digital-value">
+        --
+      </div>
+    </div>
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            Main Indicators
+        </div>
+        <div class="sub-status-box-indicator">
+          <div class="status-box-indicator-children-left">
+              <img id="bus-1-seat-belt-image" src="{{ url_for("static", filename="./assets/seat_belt_closed.png") }}" />
+          </div>
+          <div class="status-box-indicator-children-right" id="bus-1-main-indicator-speed-value">
+              Speed: --
+          </div>
+        </div>
+      </div>
+
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            Engine
+        </div>
+        <div class="sub-status-box-indicator" id="bus-1-sub-status-box-indicator-engine-value">
+          Off
+        </div>
+        
+      </div>
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            Accident Indicators
+        </div>
+        <div class="sub-status-box-indicator">
+          <div class="status-box-indicator-children-left" id="bus-1-status-box-indicator-children-left-collision-value">
+              Collesion: No
+          </div>
+          <div class="status-box-indicator-children-right" id="bus-1-status-box-indicator-children-left-flip-value">
+              Flip: No
+          </div>
+        </div>
+      </div>
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            System
+        </div>
+        <div class="sub-status-box-indicator" id="bus-1-sub-status-box-system-indicator-value">
+            Active
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <div class="bus-container">
+    <div class="container-title">Bus-2</div>
+
+    <div class="sub-container">
+      <div class="gauge-container">
+        <div class="gauge-progress">
+            <div class="gauge-progress-bar" id="bus-2-gauge-progress-bar"></div>
+            <div class="needle" id="bus-2-gauge-needle"></div>
+        </div>
+        <div class="gauge-digital-value" id="bus-2-motor-speed-gauge-digital-value">
+          --
+        </div>
+    </div>
+  
+    <div class="gauge-container">
+      <div class="gauge-progress">
+          <div class="gauge-progress-bar"></div>
+          <div class="needle"></div>
+      </div>
+      <div class="gauge-digital-value">
+        --
+      </div>
+    </div>
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            Main Indicators
+        </div>
+        <div class="sub-status-box-indicator">
+          <div class="status-box-indicator-children-left">
+              <img id="bus-2-seat-belt-image" src="{{ url_for("static", filename="./assets/seat_belt_closed.png") }}" />
+          </div>
+          <div class="status-box-indicator-children-right" id="bus-2-main-indicator-speed-value">
+              Speed: --
+          </div>
+        </div>
+      </div>
+
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            Engine
+        </div>
+        <div class="sub-status-box-indicator" id="bus-2-sub-status-box-indicator-engine-value">
+          Off
+        </div>
+        
+      </div>
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            Accident Indicators
+        </div>
+        <div class="sub-status-box-indicator">
+          <div class="status-box-indicator-children-left" id="bus-2-status-box-indicator-children-left-collision-value">
+              Collesion: No
+          </div>
+          <div class="status-box-indicator-children-right" id="bus-2-status-box-indicator-children-left-flip-value">
+              Flip: No
+          </div>
+        </div>
+      </div>
+
+      <div class="status-box-indicator">
+        <div class="status-box-indicator-title">
+            System
+        </div>
+        <div class="sub-status-box-indicator" id="bus-2-sub-status-box-system-indicator-value">
+            Active
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+
+</div>
+
+  <script type="text/javascript" src="{{ url_for('static', filename="js/app.js") }}" ></script>
+{% endblock %}

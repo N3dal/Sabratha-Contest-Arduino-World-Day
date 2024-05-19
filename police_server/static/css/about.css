@@ -1,0 +1,26 @@
+body{
+    background-color: #404248;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    
+}
+
+p{
+    font-size: 36px;
+}
+
+ul{
+    font-size: 36px;
+    list-style-type: none;
+}
+
+li{
+    font-size: 36px;
+    margin: 20px;
+}
+
+a{
+    color: white;
+    all: unset;
+}
