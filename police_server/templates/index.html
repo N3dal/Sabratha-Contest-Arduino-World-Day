@@ -8,14 +8,32 @@
 
 <!-- create the control panel-->
 <ul>
-  <li><a href="{{ url_for('about') }}">About</a></li>
-  <li><a href="{{ url_for('log') }}">Logs</a></li>
   <li><a href="{{ url_for('settings') }}">Settings</a></li>
-  <li><a href="{{ url_for('reports') }}">Reports</a></li>
+  <li><a href="{{ url_for('about') }}">About</a></li>
 </ul>
 
 <div class="main-container">
 
+  {% for report in reports %}
+  <a href="/print_fine/{{ report.id }}">
+  <div class="reports-widget" >
+    {{report.driver_name}}
+
+    {% if report.collision_state == 1 or report.tilt_state == 1 %}
+    <p>Accident</p>       
+    {% endif %}
+
+    {% if report.seat_belt_state == 0 %}
+    <p>Seat Belt Fine</p>       
+    {% endif %}
+  
+    {% if report.motor_speed_level >= 75 %}
+    <p>Over Speed Limit Fine</p>       
+    {% endif %}
+  </div>
+  </a>
+
+  {% endfor %}
 
 </div>
 

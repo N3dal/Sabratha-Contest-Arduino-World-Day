@@ -22,6 +22,7 @@ from threading import Thread
 import atexit
 from time import sleep as delay
 import socket
+import json
 
 # # to control the access of the nodes-data global variable;
 # data_lock = threading.Lock()
@@ -59,7 +60,7 @@ db = SQLAlchemy(app)
 # CORS(app)
 
 
-class Log(db.Model):
+class Report(db.Model):
     """
         Docstring;
     """
@@ -67,12 +68,13 @@ class Log(db.Model):
     bus_id = db.Column(db.String(200), nullable=False)
     driver_id = db.Column(db.String(200), default="Empty")
     driver_name = db.Column(db.String(200), default="Empty")
-    engine_state = db.Column(db.String(200), default="Empty")
-    collision_state = db.Column(db.String(200), default="Empty")
-    motor_speed_level = db.Column(db.String(200), default="Empty")
-    seat_belt_state = db.Column(db.String(200), default="Empty")
-    system_state = db.Column(db.String(200), default="Empty")
-    date = db.Column(db.DateTime, default=datetime.now())
+    engine_state = db.Column(db.Integer, default="Empty")
+    collision_state = db.Column(db.Integer, default="Empty")
+    tilt_state = db.Column(db.Integer, default="Empty")
+    motor_speed_level = db.Column(db.Integer, default="Empty")
+    seat_belt_state = db.Column(db.Integer, default="Empty")
+    system_state = db.Column(db.Integer, default="Empty")
+    record_date = db.Column(db.DateTime, default=datetime.now())
 
 
 def log_data() -> None:
@@ -117,8 +119,8 @@ def log_data() -> None:
     return None
 
 
-@app.route("/login", methods=[POST, GET])
-@app.route("/", methods=[POST, GET])
+@ app.route("/login", methods=[POST, GET])
+@ app.route("/", methods=[POST, GET])
 def login():
     message = ""
     if request.method == POST and "username" in request.form and "password" in request.form:
@@ -126,7 +128,9 @@ def login():
         password = request.form["password"]
 
         if username == "admin" and password == "admin":
-            return render_template("index.html", server_ip=server_ip)
+            all_reports = Report.query.order_by(Report.record_date).all()
+            print(f"[+] {all_reports}")
+            return render_template("index.html", server_ip=server_ip, reports=all_reports)
         else:
             return redirect("login")
     else:
@@ -135,22 +139,45 @@ def login():
     return render_template(r"login.html")
 
 
-@app.route("/send_data", methods=[POST])
+@ app.route("/send_data", methods=[POST])
 def send_data():
     global nodes_data
     json_data = request.get_json()
-    # for key, value in json_data.items():
-    #     if type(value) is float and isnan(value):
-    #         json_data[key] = "Nan"
 
     nodes_data[json_data["bus-id"]] = json_data
     print(f"[+]  {json_data}")
-    # log_data()
+
+    for bus_name, json_data in nodes_data.items():
+        if json_data is None:
+            pass
+
+        else:
+            data_to_log = Report(
+                bus_id=json_data["bus-id"],
+                driver_id=json_data["driver-id"],
+                driver_name=json_data["driver-name"],
+                engine_state=json_data["engine-state"],
+                collision_state=json_data["collision-state"],
+                tilt_state=json_data["tilt-state"],
+                motor_speed_level=json_data["motor-speed-level"],
+                seat_belt_state=json_data["seat-belt-state"],
+                system_state=json_data["system-state"],
+                record_date=datetime.now()
+            )
+            pass
+
+        # try:
+        # app.app_context().push()
+        db.session.add(data_to_log)
+        db.session.commit()
+
+        # except Exception as e:
+        #     print(f"[+]     can't add new data to db!!! {e}")
 
     return ""
 
 
-@app.route("/get_data", methods=[GET])
+@ app.route("/get_data", methods=[GET])
 def get_data():
     global nodes_data
     current_data = nodes_data.copy()
@@ -162,29 +189,55 @@ def get_data():
     return jsonify(current_data)
 
 
-@app.route("/reports")
-def reports():
-    return "Reports Page"
-
-
-@app.route("/settings")
+@ app.route("/settings")
 def settings():
+    with open("./.settings.json", "r") as file:
+        settings_data = json.load(file)
 
-    return render_template("settings.html")
+    seat_belt_fine_price = settings_data["seat-belt-fine-price"]
+    over_speed_limit_price = settings_data["over-speed-limit-fine-price"]
 
-
-@app.route("/log")
-def log():
-
-    # log_data = Log.query.order_by(Log.node_name).all()
-
-    # return render_template("log.html", log_data=log_data)
-    return ""
+    return render_template("settings.html", seat_belt_fine_price=seat_belt_fine_price, over_speed_limit_price=over_speed_limit_price)
 
 
-@app.route("/about")
+@ app.route("/save_settings", methods=[POST])
+def save_settings():
+    message = ""
+    if request.method == POST:
+        seat_belt_fine_price = request.form["seat-belt-fine"]
+        over_speed_limit_fine_price = request.form["over-speed-limit-fine"]
+
+        settings_data = {
+            "seat-belt-fine-price": seat_belt_fine_price,
+            "over-speed-limit-fine-price": over_speed_limit_fine_price
+        }
+
+        with open(".settings.json", "w") as file:
+            json.dump(settings_data, file)
+    else:
+        print("[+] Not enter")
+        pass
+
+    return redirect("/settings", code=302)
+
+
+@ app.route("/about")
 def about():
     return render_template("about.html")
+
+
+@ app.route("/print_fine/<int:id>", methods=[GET])
+def print_fine(id):
+
+    fine = Report.query.get_or_404(id)
+
+    with open("./.settings.json", "r") as file:
+        settings_data = json.load(file)
+
+    seat_belt_fine_price = settings_data["seat-belt-fine-price"]
+    over_speed_limit_price = settings_data["over-speed-limit-fine-price"]
+
+    return render_template("fine.html", fine=fine, seat_belt_fine_price=seat_belt_fine_price, over_speed_limit_price=over_speed_limit_price)
 
 
 def main():

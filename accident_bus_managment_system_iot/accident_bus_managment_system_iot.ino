@@ -104,23 +104,39 @@ void loop(void){
 
   bus_http_client.end();
 
-  if (collision_sensor_state == 1 ||
-  tilt_sensor_state == 1 ||
-  seat_belt_sensor_state == 0||
-  motor_speed >=70){
-    HTTPClient police_http_client;
-    police_http_client.begin(client, String("http://") + police_server_ip_address.toString() + String(":8080") + "/send_data");
-    police_http_client.addHeader("Content-Type", "application/json");
+  if (collision_sensor_state == 1 ||  tilt_sensor_state == 1 ||  seat_belt_sensor_state == 0 ||  motor_speed >=75){
 
-
-    // int http_code = http.GET();
-    int police_client_http_code = police_http_client.POST(json_msg_buffer);
-
-    if (police_client_http_code != 200){
-    }else{
+    if (collision_sensor_state == 1){
+      current_event = COLLISION_ACCIDENT;
+    }
+    else if (tilt_sensor_state == 1){
+      current_event = FLIP_ACCIDENT;
+    }
+    else if ( seat_belt_sensor_state == 0){
+      current_event = SEAT_BELT_VIOLATION;
+    }
+    else{
+      current_event = OVER_SPEED_LIMIT_VIOLATION;
     }
 
-    police_http_client.end();
+    if (current_event != last_event){
+      
+      HTTPClient police_http_client;
+      police_http_client.begin(client, String("http://") + police_server_ip_address.toString() + String(":8080") + "/send_data");
+      police_http_client.addHeader("Content-Type", "application/json");
+
+
+      int police_client_http_code = police_http_client.POST(json_msg_buffer);
+
+      if (police_client_http_code != 200){
+      }else{
+      }
+
+      police_http_client.end();
+
+      last_event = current_event;
+    }
+
   }
 
 

@@ -34,6 +34,8 @@ uint8_t seat_belt_sensor_state = 1;
 uint8_t collision_sensor_state = 0;
 uint8_t bus_engine_state = 0;
 float motor_speed = 0.0;
+uint8_t last_event = 0;
+uint8_t current_event = 0;
 
 
 
